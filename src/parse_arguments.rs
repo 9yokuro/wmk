@@ -38,14 +38,14 @@ impl Options {
     }
 }
 
-pub fn parse_arguments() {
+pub fn parse_arguments(wmk_data_home: &String) {
     let arguments = Arguments::parse();
 
     let options = Options::new(arguments.quiet);
 
     if arguments.directory {
-        actions::create_dir(&arguments.path, &options);
+        actions::create_dir(&arguments.path, &options, wmk_data_home);
     } else {
-        actions::create_file(&arguments.path, &options);
+        actions::create_file(&arguments.path, &options, wmk_data_home);
     }
 }

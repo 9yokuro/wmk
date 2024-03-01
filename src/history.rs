@@ -8,7 +8,6 @@ use std::{fs::File, path::Path};
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct History {
     date: DateTime<Local>,
-    exists: bool,
     is_directory: bool,
     path: String,
 }
@@ -17,13 +16,10 @@ impl History {
     pub fn new<P: AsRef<Path>>(path: P, is_directory: bool) -> Self {
         let date = Local::now();
 
-        let exists = Filey::new(&path).exists();
-
         let path = path.as_ref().to_string_lossy().to_string();
 
         Self {
             date,
-            exists,
             is_directory,
             path,
         }
@@ -40,7 +36,7 @@ impl History {
     }
 
     pub fn exists(&self) -> bool {
-        self.exists
+        Filey::new(&self.path).exists()
     }
 
     pub fn is_directory(&self) -> bool {
