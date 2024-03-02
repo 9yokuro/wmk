@@ -1,6 +1,6 @@
 # Wmk - A file creation tool written in rust
 
-![workflow_build](https://github.com/9yokuro/wmk/actions/workflows/build.yml/badge.svg)
+![workflow_rust](https://github.com/9yokuro/wmk/actions/workflows/rust.yml/badge.svg)
 ![Crates.io Version](https://img.shields.io/crates/v/wmk)
 
 ## Features
