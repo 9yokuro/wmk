@@ -5,6 +5,7 @@
 ## Features
 - Colorful, easy-to-read output
 - Record history
+
 With mkdir and touch:
 ```console
 $ mkdir --parents a/b/c/d/e/f/
