@@ -143,6 +143,14 @@ pub fn show_history(wmk_data_home: &String) {
 }
 
 pub fn clear_history(options: &Options, wmk_data_home: &String) -> Result<()> {
+    if WalkDir::new(wmk_data_home).into_iter().nth(1).is_none() {
+        eprintln!("There is no history");
+
+        return Ok(());
+    }
+
+    show_history(wmk_data_home);
+
     let filey = Filey::new(wmk_data_home);
 
     if !confirm("Clear history?")? {
@@ -207,6 +215,8 @@ pub fn delete_history(options: &Options, wmk_data_home: &String) -> Result<()> {
                 .remove()?;
             } else {
                 eprintln!("Canceled");
+
+                return Ok(());
             }
         }
     }
