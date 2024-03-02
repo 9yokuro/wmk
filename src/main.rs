@@ -27,5 +27,9 @@ fn main() {
         exit(1);
     }
 
-    parse_arguments(wmk_data_home_absolutized);
+    if let Err(e) = parse_arguments(wmk_data_home_absolutized) {
+        print_error_message(e);
+
+        exit(1);
+    }
 }

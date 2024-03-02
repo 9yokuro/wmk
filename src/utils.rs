@@ -1,5 +1,6 @@
 use colored::Colorize;
-use filey::{Filey, Result};
+use filey::{Error::FileyError, Filey, Result};
+use inquire::Confirm;
 use std::{env::var, fmt::Display, path::Path};
 
 pub fn print_error_message<D: Display>(message: D) {
@@ -12,4 +13,12 @@ pub fn xdg_data_home() -> String {
 
 pub fn absolutize<P: AsRef<Path>>(path: P) -> Result<String> {
     Ok(Filey::new(path).expand_user()?.absolutize()?.to_string())
+}
+
+pub fn confirm<D: Display>(message: D) -> Result<bool> {
+    Confirm::new(message.to_string().as_str())
+        .with_default(false)
+        .prompt()
+        .map_err(|e| e.into())
+        .map_err(FileyError)
 }

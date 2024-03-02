@@ -3,13 +3,33 @@ use colored::Colorize;
 use filey::{Error::FileyError, Filey, Result};
 use serde::{Deserialize, Serialize};
 use serde_json::{from_reader, to_writer_pretty};
-use std::{fs::File, path::Path};
+use std::{fmt, fs::File, path::Path};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct History {
     date: DateTime<Local>,
     is_directory: bool,
     path: String,
+}
+
+impl fmt::Display for History {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let date = format!("{}", self.date().format("%d %b %R")).cyan();
+
+        let state = if self.exists() {
+            "  exists  ".green()
+        } else {
+            "not exists".red()
+        };
+
+        let path = if self.is_directory() {
+            self.path().blue().to_string()
+        } else {
+            self.path().to_string()
+        };
+
+        write!(f, "{} {} {}", date, state, path)
+    }
 }
 
 impl History {
@@ -56,22 +76,4 @@ impl History {
             .map_err(|e| e.into())
             .map_err(FileyError)
     }
-}
-
-pub fn format(history: &History) -> String {
-    let date = format!("{}", history.date().format("%d %b %R")).cyan();
-
-    let state = if history.exists() {
-        "exists".green()
-    } else {
-        "not exists".red()
-    };
-
-    let path = if history.is_directory() {
-        history.path().blue().to_string()
-    } else {
-        history.path().to_string()
-    };
-
-    format!("{} {} {}", date, state, path)
 }
