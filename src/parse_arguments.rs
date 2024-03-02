@@ -16,7 +16,7 @@ struct Arguments {
     /// Clear history.
     #[clap(short, long)]
     clear_history: bool,
-    /// Delete history.
+    /// Delete history interactively.
     #[clap(short = 'D', long)]
     delete_history: bool,
     /// Create directories instead of files.
