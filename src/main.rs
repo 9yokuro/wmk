@@ -4,8 +4,8 @@ mod history_related;
 mod parse_arguments;
 mod prelude;
 
+use crate::{parse_arguments::parse_arguments, prelude::xdg_data_home};
 use std::{fs, io};
-use crate::{prelude::xdg_data_home, parse_arguments::parse_arguments};
 
 fn main() {
     initialize();

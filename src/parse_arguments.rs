@@ -1,4 +1,4 @@
-use crate::{history_related, create};
+use crate::{create, history_related};
 use clap::Parser;
 
 #[derive(Parser, Debug)]
@@ -33,7 +33,7 @@ pub fn parse_arguments() {
     let arguments = Arguments::parse();
 
     if arguments.show_history {
-       history_related::show_history();
+        history_related::show_history();
     }
 
     if arguments.delete_history {
