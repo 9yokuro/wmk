@@ -12,7 +12,7 @@ pub struct History {
 
 impl fmt::Display for History {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let date = format!("{}", self.date().format("%d %b %R")).cyan();
+        let date = format!("{}", self.date.format("%d %b %R")).cyan();
 
         let state = if self.path.exists() {
             "  exists  ".green()
@@ -33,18 +33,6 @@ impl fmt::Display for History {
 impl History {
     pub const fn new(date: DateTime<Local>, is_dir: bool, path: path::PathBuf) -> Self {
         Self { date, is_dir, path }
-    }
-
-    pub const fn date(&self) -> &DateTime<Local> {
-        &self.date
-    }
-
-    pub const fn is_dir(&self) -> bool {
-        self.is_dir
-    }
-
-    pub const fn path(&self) -> &path::PathBuf {
-        &self.path
     }
 
     pub fn read(file: fs::File) -> serde_json::Result<Self> {
