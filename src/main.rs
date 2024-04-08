@@ -1,35 +1,23 @@
-pub mod actions;
+mod create;
 mod history;
-mod initialize;
+mod history_related;
 mod parse_arguments;
-pub mod utils;
+mod prelude;
 
-pub use crate::{history::History, parse_arguments::Options};
-
-use crate::{initialize::initialize, parse_arguments::parse_arguments, utils::*};
-use std::{path::PathBuf, process::exit};
+use std::{fs, io};
+use crate::{prelude::xdg_data_home, parse_arguments::parse_arguments};
 
 fn main() {
-    let wmk_data_home = PathBuf::from(xdg_data_home()).join("wmk");
+    initialize();
+    parse_arguments();
+}
 
-    let wmk_data_home_absolutized = &match absolutize(wmk_data_home) {
-        Ok(absolutized) => absolutized,
-        Err(e) => {
-            print_error_message(e);
+fn initialize() {
+    let history_dir = xdg_data_home().join("wmk");
 
-            exit(1);
+    if let Err(e) = fs::create_dir_all(history_dir) {
+        if e.kind() != io::ErrorKind::AlreadyExists {
+            eprintln!("error: {}", e);
         }
-    };
-
-    if let Err(e) = initialize(wmk_data_home_absolutized) {
-        print_error_message(e);
-
-        exit(1);
-    }
-
-    if let Err(e) = parse_arguments(wmk_data_home_absolutized) {
-        print_error_message(e);
-
-        exit(1);
     }
 }

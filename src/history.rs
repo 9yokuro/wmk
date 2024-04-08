@@ -1,31 +1,29 @@
 use chrono::{DateTime, Local};
 use colored::Colorize;
-use filey::{Error::FileyError, Filey, Result};
 use serde::{Deserialize, Serialize};
-use serde_json::{from_reader, to_writer_pretty};
-use std::{fmt, fs::File, path::Path};
+use std::{fmt, fs, path};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct History {
     date: DateTime<Local>,
-    is_directory: bool,
-    path: String,
+    is_dir: bool,
+    path: path::PathBuf,
 }
 
 impl fmt::Display for History {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let date = format!("{}", self.date().format("%d %b %R")).cyan();
 
-        let state = if self.exists() {
+        let state = if self.path.exists() {
             "  exists  ".green()
         } else {
             "not exists".red()
         };
 
-        let path = if self.is_directory() {
-            self.path().blue().to_string()
+        let path = if self.is_dir {
+            self.path.to_string_lossy().blue().to_string()
         } else {
-            self.path().to_string()
+            self.path.to_string_lossy().to_string()
         };
 
         write!(f, "{} {} {}", date, state, path)
@@ -33,47 +31,34 @@ impl fmt::Display for History {
 }
 
 impl History {
-    pub fn new<P: AsRef<Path>>(path: P, is_directory: bool) -> Self {
-        let date = Local::now();
-
-        let path = path.as_ref().to_string_lossy().to_string();
-
-        Self {
-            date,
-            is_directory,
-            path,
-        }
+    pub const fn new(date: DateTime<Local>, is_dir: bool, path: path::PathBuf) -> Self {
+        Self { date, is_dir, path }
     }
 
-    pub fn read<P: AsRef<Path>>(path: P) -> Result<Self> {
-        let file = File::open(path).map_err(|e| e.into()).map_err(FileyError)?;
-
-        from_reader(file).map_err(|e| e.into()).map_err(FileyError)
-    }
-
-    pub fn date(&self) -> &DateTime<Local> {
+    pub const fn date(&self) -> &DateTime<Local> {
         &self.date
     }
 
-    pub fn exists(&self) -> bool {
-        Filey::new(&self.path).exists()
+    pub const fn is_dir(&self) -> bool {
+        self.is_dir
     }
 
-    pub fn is_directory(&self) -> bool {
-        self.is_directory
-    }
-
-    pub fn path(&self) -> &String {
+    pub const fn path(&self) -> &path::PathBuf {
         &self.path
     }
 
-    pub fn write<P: AsRef<Path>>(&self, path: P) -> Result<()> {
-        let file = File::create(path)
-            .map_err(|e| e.into())
-            .map_err(FileyError)?;
+    pub fn read(file: fs::File) -> serde_json::Result<Self> {
+        serde_json::from_reader(file)
+    }
 
-        to_writer_pretty(file, &self)
-            .map_err(|e| e.into())
-            .map_err(FileyError)
+    pub fn write(&self, file: fs::File) -> serde_json::Result<()> {
+        serde_json::to_writer_pretty(file, &self)
+    }
+
+    pub fn history_file(&self) -> String {
+        let date = self.date.format("%FT%T%.9f");
+        let file_name = &self.path.file_name().unwrap().to_string_lossy().to_string();
+
+        format!("{}-{}.json", date, file_name)
     }
 }
