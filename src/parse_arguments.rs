@@ -21,12 +21,34 @@ struct Arguments {
     /// Create directories instead of files.
     #[clap(short, long)]
     directory: bool,
+    /// Do not create a history file.
+    #[clap(short = 'R', long)]
+    no_record: bool,
     /// Do not print log messages.
     #[clap(short, long)]
     quiet: bool,
     /// Show history.
     #[clap(short, long)]
     show_history: bool,
+}
+
+pub struct Options {
+    no_record: bool,
+    quiet: bool,
+}
+
+impl Options {
+    pub const fn new(no_record: bool, quiet: bool) -> Self {
+        Self { no_record, quiet }
+    }
+
+    pub const fn no_record(&self) -> bool {
+        self.no_record
+    }
+
+    pub const fn quiet(&self) -> bool {
+        self.quiet
+    }
 }
 
 pub fn parse_arguments() {
@@ -44,9 +66,11 @@ pub fn parse_arguments() {
         history_related::clear_history(arguments.quiet);
     }
 
+    let options = Options::new(arguments.no_record, arguments.quiet);
+
     if arguments.directory {
-        create::create_dirs(&arguments.path, arguments.quiet);
+        create::create_dirs(&arguments.path, &options);
     } else {
-        create::create_files(&arguments.path, arguments.quiet);
+        create::create_files(&arguments.path, &options);
     }
 }
