@@ -1,6 +1,5 @@
-use crate::actions;
+use crate::{history_related, create};
 use clap::Parser;
-use filey::Result;
 
 #[derive(Parser, Debug)]
 #[clap(
@@ -30,46 +29,24 @@ struct Arguments {
     show_history: bool,
 }
 
-/// Command line options.
-#[derive(Debug)]
-pub struct Options {
-    quiet: bool,
-}
-
-impl Options {
-    /// Constructs new Options.
-    pub const fn new(quiet: bool) -> Self {
-        Self { quiet }
-    }
-
-    /// Returns the value of the field "quiet".
-    pub const fn quiet(&self) -> bool {
-        self.quiet
-    }
-}
-
-pub fn parse_arguments(wmk_data_home: &String) -> Result<()> {
+pub fn parse_arguments() {
     let arguments = Arguments::parse();
 
-    let options = Options::new(arguments.quiet);
-
     if arguments.show_history {
-        actions::show_history(wmk_data_home);
+       history_related::show_history();
     }
 
     if arguments.delete_history {
-        actions::delete_history(&options, wmk_data_home)?;
+        history_related::delete_history(arguments.quiet);
     }
 
     if arguments.clear_history {
-        actions::clear_history(&options, wmk_data_home)?;
+        history_related::clear_history(arguments.quiet);
     }
 
     if arguments.directory {
-        actions::create_dir(&arguments.path, &options, wmk_data_home);
+        create::create_dirs(&arguments.path, arguments.quiet);
     } else {
-        actions::create_file(&arguments.path, &options, wmk_data_home);
+        create::create_files(&arguments.path, arguments.quiet);
     }
-
-    Ok(())
 }
