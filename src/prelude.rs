@@ -11,13 +11,7 @@ pub fn xdg_data_home() -> path::PathBuf {
 
 pub fn create_file_all<P: AsRef<path::Path>>(path: P) -> io::Result<()> {
     let parent_dir = path.as_ref().parent().unwrap();
-
-    if let Err(e) = fs::create_dir_all(parent_dir) {
-        if e.kind() != io::ErrorKind::AlreadyExists {
-            return Err(e);
-        }
-    }
-
+    fs::create_dir_all(parent_dir)?;
     fs::File::create(path)?;
     Ok(())
 }

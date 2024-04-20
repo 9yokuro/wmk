@@ -4,9 +4,13 @@ use colored::Colorize;
 use path_absolutize::Absolutize;
 use std::{fs, path};
 
-pub fn create_files(paths: &[String], options: &Options) {
+pub fn create_files<P, Q>(paths: &[P], options: &Options, history_dir: Q)
+where
+    P: AsRef<path::Path>,
+    Q: AsRef<path::Path>,
+{
     for path in paths {
-        let absolutized = match path::Path::new(path).absolutize() {
+        let absolutized = match path.as_ref().absolutize() {
             Ok(a) => a,
             Err(e) => {
                 eprintln!("error: {}", e);
@@ -21,7 +25,7 @@ pub fn create_files(paths: &[String], options: &Options) {
 
         if !options.no_record() {
             let history = History::new(Local::now(), false, absolutized.to_path_buf());
-            let history_path = xdg_data_home().join("wmk").join(history.history_file());
+            let history_path = history_dir.as_ref().join(history.history_file());
 
             let file = match fs::File::create(history_path) {
                 Ok(f) => f,
@@ -47,9 +51,13 @@ pub fn create_files(paths: &[String], options: &Options) {
     }
 }
 
-pub fn create_dirs(paths: &[String], options: &Options) {
+pub fn create_dirs<P, Q>(paths: &[P], options: &Options, history_dir: Q)
+where
+    P: AsRef<path::Path>,
+    Q: AsRef<path::Path>,
+{
     for path in paths {
-        let absolutized = match path::Path::new(path).absolutize() {
+        let absolutized = match path.as_ref().absolutize() {
             Ok(a) => a,
             Err(e) => {
                 eprintln!("error: {}", e);
@@ -64,7 +72,7 @@ pub fn create_dirs(paths: &[String], options: &Options) {
 
         if !options.no_record() {
             let history = History::new(Local::now(), true, absolutized.to_path_buf());
-            let history_path = xdg_data_home().join("wmk").join(history.history_file());
+            let history_path = history_dir.as_ref().join(history.history_file());
 
             let file = match fs::File::create(history_path) {
                 Ok(f) => f,

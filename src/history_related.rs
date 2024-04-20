@@ -1,21 +1,27 @@
-use crate::{history::History, prelude::*};
+use crate::history::History;
 use colored::Colorize;
 use inquire::{Confirm, Select};
 use std::{
     fs,
     io::{self, Write},
+    path,
 };
 use walkdir::WalkDir;
 
-pub fn clear_history(quiet: bool) {
-    let history_dir = xdg_data_home().join("wmk");
-
-    if WalkDir::new(&history_dir).into_iter().nth(1).is_none() {
+pub fn clear_history<P>(quiet: bool, history_dir: P)
+where
+    P: AsRef<path::Path>,
+{
+    if WalkDir::new(history_dir.as_ref())
+        .into_iter()
+        .nth(1)
+        .is_none()
+    {
         eprintln!("There is no history");
         return;
     }
 
-    show_history();
+    show_history(history_dir.as_ref());
 
     let confirmed = match Confirm::new("Clear history?").with_default(false).prompt() {
         Ok(c) => c,
@@ -40,17 +46,22 @@ pub fn clear_history(quiet: bool) {
     }
 }
 
-pub fn show_history() {
-    let history_dir = xdg_data_home().join("wmk");
-
-    if WalkDir::new(&history_dir).into_iter().nth(1).is_none() {
+pub fn show_history<P>(history_dir: P)
+where
+    P: AsRef<path::Path>,
+{
+    if WalkDir::new(history_dir.as_ref())
+        .into_iter()
+        .nth(1)
+        .is_none()
+    {
         eprintln!("There is no history");
         return;
     }
 
     let mut out = io::BufWriter::new(io::stdout().lock());
 
-    for path in WalkDir::new(&history_dir).into_iter().skip(1) {
+    for path in WalkDir::new(history_dir).into_iter().skip(1) {
         let path = match path {
             Ok(p) => p,
             Err(e) => {
@@ -79,17 +90,22 @@ pub fn show_history() {
     }
 }
 
-pub fn delete_history(quiet: bool) {
-    let history_dir = xdg_data_home().join("wmk");
-
-    if WalkDir::new(&history_dir).into_iter().nth(1).is_none() {
+pub fn delete_history<P>(quiet: bool, history_dir: P)
+where
+    P: AsRef<path::Path>,
+{
+    if WalkDir::new(history_dir.as_ref())
+        .into_iter()
+        .nth(1)
+        .is_none()
+    {
         eprintln!("There is no history");
         return;
     }
 
     let mut hist = vec![];
 
-    for path in WalkDir::new(&history_dir).into_iter().skip(1) {
+    for path in WalkDir::new(history_dir.as_ref()).into_iter().skip(1) {
         let path = match path {
             Ok(p) => p,
             Err(e) => {
@@ -140,7 +156,7 @@ pub fn delete_history(quiet: bool) {
         };
 
         if confirmed {
-            if let Err(e) = fs::remove_file(history_dir.join(answer.history_file())) {
+            if let Err(e) = fs::remove_file(history_dir.as_ref().join(answer.history_file())) {
                 eprintln!("error: {}", e);
                 return;
             }
