@@ -1,42 +1,43 @@
 # Wmk - A file creation tool written in rust
 
-![workflow_rust](https://github.com/9yokuro/wmk/actions/workflows/rust.yml/badge.svg)
+![workflow rust](https://github.com/9yokuro/wmk/actions/workflows/rust.yml/badge.svg)
 ![Crates.io Version](https://img.shields.io/crates/v/wmk)
 
 ## Features
 - Colorful, easy-to-read output
-- Record history
+- History
 
 With mkdir and touch:
-```console
-$ mkdir --parents a/b/c/d/e/f/
-$ touch a/b/c/d/e/f/g.txt
+```bash
+mkdir --parents a/b/c/d/e/f/
+touch a/b/c/d/e/f/g.txt
 ```
 With wmk:
-```console
-$ wmk a/b/c/d/e/f/g.txt
+```bash
+wmk a/b/c/d/e/f/g.txt
 ```
 
 ## Installation
 Run the following Cargo command:
-```console
-$ cargo install wmk
+```bash
+cargo install wmk
 ```
 
 ## Usage
 Create files:
-```console
-$ wmk foo.txt bar.txt ...
+```bash
+wmk foo.txt bar.txt ...
 ```
+![create files](./images/create_files.png)
 
 Create directories:
-```console
-$ wmk --directory foo_dir bar_dir ...
+```bash
+wmk --directory foo_dir bar_dir ...
 ```
 
 Show history:
-```console
-$ wmk --show-history
+```bash
+wmk --show-history
 
 02 Mar 10:37   exists   /absolute/path/to/foo.txt
 02 Mar 10:37   exists   /absolute/path/to/bar.txt
@@ -46,21 +47,22 @@ $ wmk --show-history
 directories are shown in blue.
 
 Delete history interactively:
-```console
-$ wmk --delete-history
+```bash
+wmk --delete-history
 ```
 
 Clear history:
-```console
-$ wmk --clear-history
+```bash
+wmk --clear-history
 ```
 
 ### Options
-```console
+```bash
 -c, --clear-history   Clear history
 -D, --delete-history  Delete history interactively
 -d, --directory       Create directories instead of files
 -q, --quiet           Do not print log messages
+-R, --no-record       Do not create a history file
 -s, --show-history    Show history
 -h, --help            Print help
 -V, --version         Print version
@@ -81,6 +83,3 @@ at your option.
 Unless you explicitly state otherwise, any contribution intentionally submitted
 for inclusion in the work by you, as defined in the Apache-2.0 license, shall be
 dual licensed as above, without any additional terms or conditions.
-
-## TODO
-- add `--no-record` option
