@@ -1,5 +1,6 @@
 use crate::{create, history_related};
 use clap::Parser;
+use std::path;
 
 #[derive(Parser, Debug)]
 #[clap(
@@ -51,26 +52,32 @@ impl Options {
     }
 }
 
-pub fn parse_arguments() {
+pub fn parse_arguments<P>(history_dir: P)
+where
+    P: AsRef<path::Path>,
+{
     let arguments = Arguments::parse();
 
     if arguments.show_history {
-        history_related::show_history();
+        history_related::show_history(history_dir);
+        return;
     }
 
     if arguments.delete_history {
-        history_related::delete_history(arguments.quiet);
+        history_related::delete_history(arguments.quiet, history_dir);
+        return;
     }
 
     if arguments.clear_history {
-        history_related::clear_history(arguments.quiet);
+        history_related::clear_history(arguments.quiet, history_dir);
+        return;
     }
 
     let options = Options::new(arguments.no_record, arguments.quiet);
 
     if arguments.directory {
-        create::create_dirs(&arguments.path, &options);
+        create::create_dirs(&arguments.path, &options, history_dir);
     } else {
-        create::create_files(&arguments.path, &options);
+        create::create_files(&arguments.path, &options, history_dir);
     }
 }
