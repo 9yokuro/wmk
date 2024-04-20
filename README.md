@@ -1,4 +1,4 @@
-# Wmk - A file creation tool written
+# Wmk - A file creation tool
 
 ![workflow rust](https://github.com/9yokuro/wmk/actions/workflows/rust.yml/badge.svg)
 ![Crates.io Version](https://img.shields.io/crates/v/wmk)
