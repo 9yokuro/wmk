@@ -39,11 +39,6 @@ wmk --directory foo_dir bar_dir ...
 Show history:
 ```bash
 wmk --show-history
-
-02 Mar 10:37   exists   /absolute/path/to/foo.txt
-02 Mar 10:37   exists   /absolute/path/to/bar.txt
-02 Mar 10:37   exists   /absolute/path/to/foo_dir
-02 Mar 10:37   exists   /absolute/path/to/bar_dir
 ```
 ![show history](./images/show_history.png)
 
