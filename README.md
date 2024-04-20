@@ -7,12 +7,12 @@
 - Colorful, easy-to-read output
 - History
 
-With mkdir and touch:
+mkdir and touch:
 ```bash
 mkdir --parents a/b/c/d/e/f/
 touch a/b/c/d/e/f/g.txt
 ```
-With wmk:
+wmk:
 ```bash
 wmk a/b/c/d/e/f/g.txt
 ```
