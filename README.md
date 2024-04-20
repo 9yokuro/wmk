@@ -1,4 +1,4 @@
-# Wmk - A file creation tool written in rust
+# Wmk - A file creation tool written
 
 ![workflow rust](https://github.com/9yokuro/wmk/actions/workflows/rust.yml/badge.svg)
 ![Crates.io Version](https://img.shields.io/crates/v/wmk)
@@ -34,6 +34,7 @@ Create directories:
 ```bash
 wmk --directory foo_dir bar_dir ...
 ```
+![create directories](./images/create_directories.png)
 
 Show history:
 ```bash
@@ -44,7 +45,7 @@ wmk --show-history
 02 Mar 10:37   exists   /absolute/path/to/foo_dir
 02 Mar 10:37   exists   /absolute/path/to/bar_dir
 ```
-directories are shown in blue.
+![show history](./images/show_history.png)
 
 Delete history interactively:
 ```bash
