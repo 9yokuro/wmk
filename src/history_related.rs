@@ -1,4 +1,4 @@
-use crate::history::History;
+use crate::{history::History, prelude::is_empty_dir};
 use colored::Colorize;
 use inquire::{Confirm, Select};
 use std::{
@@ -12,11 +12,7 @@ pub fn clear_history<P>(quiet: bool, history_dir: P)
 where
     P: AsRef<path::Path>,
 {
-    if WalkDir::new(history_dir.as_ref())
-        .into_iter()
-        .nth(1)
-        .is_none()
-    {
+    if is_empty_dir(history_dir.as_ref()) {
         eprintln!("There is no history");
         return;
     }
@@ -50,11 +46,7 @@ pub fn show_history<P>(history_dir: P)
 where
     P: AsRef<path::Path>,
 {
-    if WalkDir::new(history_dir.as_ref())
-        .into_iter()
-        .nth(1)
-        .is_none()
-    {
+    if is_empty_dir(history_dir.as_ref()) {
         eprintln!("There is no history");
         return;
     }
@@ -94,11 +86,7 @@ pub fn delete_history<P>(quiet: bool, history_dir: P)
 where
     P: AsRef<path::Path>,
 {
-    if WalkDir::new(history_dir.as_ref())
-        .into_iter()
-        .nth(1)
-        .is_none()
-    {
+    if is_empty_dir(history_dir.as_ref()) {
         eprintln!("There is no history");
         return;
     }
@@ -141,31 +129,27 @@ where
         }
     };
 
-    hist.retain(|h| h == &answer);
-
-    if !hist.is_empty() {
-        let confirmed = match Confirm::new("Delete this history?")
-            .with_default(false)
-            .prompt()
-        {
-            Ok(c) => c,
-            Err(e) => {
-                eprintln!("error: {}", e);
-                return;
-            }
-        };
-
-        if confirmed {
-            if let Err(e) = fs::remove_file(history_dir.as_ref().join(answer.history_file())) {
-                eprintln!("error: {}", e);
-                return;
-            }
-
-            if !quiet {
-                eprintln!("{} this history", "Deleted".green().bold());
-            }
-        } else {
-            eprintln!("Canceled");
+    let confirmed = match Confirm::new("Delete this history?")
+        .with_default(false)
+        .prompt()
+    {
+        Ok(c) => c,
+        Err(e) => {
+            eprintln!("error: {}", e);
+            return;
         }
+    };
+
+    if confirmed {
+        if let Err(e) = fs::remove_file(history_dir.as_ref().join(answer.history_file())) {
+            eprintln!("error: {}", e);
+            return;
+        }
+
+        if !quiet {
+            eprintln!("{} this history", "Deleted".green().bold());
+        }
+    } else {
+        eprintln!("Canceled");
     }
 }
